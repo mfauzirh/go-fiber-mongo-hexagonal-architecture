@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	// "net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -65,6 +64,7 @@ func main() {
 		port = "3000" // Default port if not specified
 	}
 	fmt.Printf("Starting server on port %s\n", port)
+
 	if err := app.Listen(":" + port); err != nil {
 		log.Fatalf("Error starting server: %v\n", err)
 	}
