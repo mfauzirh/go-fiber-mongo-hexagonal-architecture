@@ -12,8 +12,8 @@ import (
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/config"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/handler/http"
 	ProfilingDB "github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo"
-	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo/repository"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mysql"
+	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mysql/repository"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/service"
 )
 
@@ -27,7 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Init database
+	// Init Profling Database
 	ctx := context.Background()
 	profilingDBClient, err := ProfilingDB.New(ctx, config.ProfilingDB)
 	if err != nil {
@@ -37,9 +37,9 @@ func main() {
 	defer profilingDBClient.Close(ctx)
 
 	fmt.Println("Successfully connected to MongoDB")
-	db := profilingDBClient.Client.Database("product-management")
+	// profilingDb := profilingDBClient.Client.Database("product-management")
 
-	// Init MySQL
+	// Init MySQL DB
 	mysqlDB, err := mysql.New(ctx, config.DB)
 	if err != nil {
 		fmt.Printf("Error initializing MySQL connection: %v\n", err)
@@ -50,7 +50,7 @@ func main() {
 	fmt.Println("Successfully connected to MySQL")
 
 	// Dependency injection
-	productRepository := repository.NewProductRepository(db, "products")
+	productRepository := repository.NewProductRepository(mysqlDB.DB)
 	productService := service.NewProductService(productRepository)
 
 	http.SetupRoutes(app, productService)

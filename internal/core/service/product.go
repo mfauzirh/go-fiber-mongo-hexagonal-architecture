@@ -28,7 +28,7 @@ func (ps *ProductService) CreateProduct(ctx context.Context, product *domain.Pro
 	return createdProduct, nil
 }
 
-func (ps *ProductService) GetProductById(ctx context.Context, id string) (*domain.Product, error) {
+func (ps *ProductService) GetProductById(ctx context.Context, id int64) (*domain.Product, error) {
 	product, err := ps.productRepository.GetProductById(ctx, id)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (ps *ProductService) GetProductById(ctx context.Context, id string) (*domai
 	return product, nil
 }
 
-func (ps *ProductService) GetProducts(ctx context.Context, page int64, limit int64) ([]domain.Product, int64, error) {
+func (ps *ProductService) GetProducts(ctx context.Context, page uint64, limit uint64) ([]domain.Product, int64, error) {
 	products, totalCount, err := ps.productRepository.GetProducts(ctx, page, limit)
 	if err != nil {
 		return nil, 0, err
@@ -55,7 +55,7 @@ func (ps *ProductService) UpdateProduct(ctx context.Context, product *domain.Pro
 	return updatedProduct, nil
 }
 
-func (ps *ProductService) DeleteProduct(ctx context.Context, id string) error {
+func (ps *ProductService) DeleteProduct(ctx context.Context, id int64) error {
 	err := ps.productRepository.DeleteProduct(ctx, id)
 	if err != nil {
 		return err
