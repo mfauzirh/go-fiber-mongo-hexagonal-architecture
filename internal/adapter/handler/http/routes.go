@@ -2,15 +2,22 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/dto"
+	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/middleware"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/service"
 )
 
 func SetupRoutes(app *fiber.App, productService *service.ProductService) {
 	productHandler := NewProductHandler(productService)
 
-	app.Post("/products", productHandler.CreateProduct)
-	app.Get("/products", productHandler.GetProducts)
-	app.Get("/products/:id", productHandler.GetProductById)
-	app.Put("/products/:id", productHandler.UpdateProduct)
-	app.Delete("/products/:id", productHandler.DeleteProduct)
+	// Api for products
+	api := app.Group("/products")
+
+	api.Post("",
+		middleware.ValidationMiddleware(dto.CreateProductRequest{}),
+		productHandler.CreateProduct)
+	api.Get("", productHandler.GetProducts)
+	api.Get("/:id", productHandler.GetProductById)
+	api.Put("/:id", middleware.ValidationMiddleware(dto.UpdateProductRequest{}), productHandler.UpdateProduct)
+	api.Delete("/:id", productHandler.DeleteProduct)
 }
