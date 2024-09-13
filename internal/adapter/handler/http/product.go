@@ -10,6 +10,10 @@ import (
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/port"
 )
 
+/*
+ * Wrapper for product handler,
+ * It holds product service port to be able to access its functionality
+ */
 type ProductHandler struct {
 	svc port.ProductService
 }

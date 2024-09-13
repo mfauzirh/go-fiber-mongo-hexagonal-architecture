@@ -8,21 +8,24 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/go-sql-driver/mysql"
-	_ "github.com/go-sql-driver/mysql" // MySQL driver
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/config"
 )
 
-// DB is a wrapper for MySQL database connection
-// that uses the Go SQL driver for MySQL.
-// It also holds a reference to squirrel.StatementBuilderType
-// which is used to build SQL queries that are compatible with MySQL syntax.
+/*
+ * This is wrapper for MySQL database connection,
+ * It holds a reference to squirrel query builder and MySQL driver
+ */
 type DB struct {
 	*sql.DB
 	QueryBuilder *squirrel.StatementBuilderType
 	url          string
 }
 
-// New creates a new MySQL database instance.
+/*
+ * Create new database connection
+ * using configuration from config
+ */
 func New(ctx context.Context, config *config.DB) (*DB, error) {
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.User,
