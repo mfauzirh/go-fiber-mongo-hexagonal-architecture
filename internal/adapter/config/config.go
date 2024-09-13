@@ -9,6 +9,7 @@ import (
 type (
 	Container struct {
 		App         *App
+		DB          *DB
 		ProfilingDB *ProfilingDB
 		HTTP        *HTTP
 	}
@@ -16,6 +17,14 @@ type (
 	App struct {
 		Name string
 		Env  string
+	}
+
+	DB struct {
+		Host     string
+		Port     string
+		User     string
+		Password string
+		Name     string
 	}
 
 	ProfilingDB struct {
@@ -43,7 +52,15 @@ func New() (*Container, error) {
 		Env:  os.Getenv("APP_ENV"),
 	}
 
-	db := &ProfilingDB{
+	db := &DB{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		Name:     os.Getenv("DB_NAME"),
+	}
+
+	profilingDB := &ProfilingDB{
 		URI: os.Getenv("MONGODB_URI"),
 	}
 
@@ -57,6 +74,7 @@ func New() (*Container, error) {
 	return &Container{
 		app,
 		db,
+		profilingDB,
 		http,
 	}, nil
 }
