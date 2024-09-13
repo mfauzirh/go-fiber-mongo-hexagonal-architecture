@@ -132,12 +132,16 @@ func (ph *ProductHandler) DeleteProduct(c *fiber.Ctx) error {
 func (ph *ProductHandler) GetProducts(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 10)
+	name := c.Query("name", "")
+	stock := c.Query("stock", "")
+	price := c.Query("price", "")
+	sortBy := c.Query("sortBy", "")
 
 	// Convert to uint64
 	pageUint64 := uint64(page)
 	limitUint64 := uint64(limit)
 
-	products, totalCount, err := ph.svc.GetProducts(c.Context(), pageUint64, limitUint64)
+	products, totalCount, err := ph.svc.GetProducts(c.Context(), pageUint64, limitUint64, name, stock, price, sortBy)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.NewWebResponse[interface{}](
 			nil,

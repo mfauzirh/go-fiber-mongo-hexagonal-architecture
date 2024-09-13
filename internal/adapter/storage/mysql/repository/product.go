@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 	_ "github.com/go-sql-driver/mysql"
@@ -79,12 +80,33 @@ func (r *ProductRepository) GetProductById(ctx context.Context, id int64) (*doma
 	return &product, nil
 }
 
-func (r *ProductRepository) GetProducts(ctx context.Context, page uint64, limit uint64) ([]domain.Product, int64, error) {
+func (r *ProductRepository) GetProducts(
+	ctx context.Context,
+	page uint64,
+	limit uint64,
+	name string,
+	stock string,
+	price string,
+	sortBy string) ([]domain.Product, int64, error) {
+
+	// Create the main query with filters
 	query := r.queryBuilder.Select("id", "name", "stock", "price").
 		From("products").
 		Limit(limit).
 		Offset((page - 1) * limit)
 
+	// Apply filters
+	query = applyFilters(query, name, stock, price)
+
+	// Add sorting
+	if sortBy != "" {
+		sortParams := strings.Split(sortBy, ",")
+		if len(sortParams) == 2 {
+			query = query.OrderBy(sortParams[0] + " " + sortParams[1])
+		}
+	}
+
+	// Build and execute the main query
 	sql, args, err := query.ToSql()
 	if err != nil {
 		log.Println("error when building select query", err)
@@ -108,9 +130,11 @@ func (r *ProductRepository) GetProducts(ctx context.Context, page uint64, limit 
 		products = append(products, product)
 	}
 
-	countQuery := r.queryBuilder.Select("COUNT(id)").
-		From("products")
+	// Create the count query with the same filters
+	countQuery := r.queryBuilder.Select("COUNT(id)").From("products")
+	countQuery = applyFilters(countQuery, name, stock, price)
 
+	// Build and execute the count query
 	countSQL, countArgs, err := countQuery.ToSql()
 	if err != nil {
 		log.Println("error when building count query", err)
@@ -186,4 +210,33 @@ func (r *ProductRepository) DeleteProduct(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+func applyFilters(query squirrel.SelectBuilder, name string, stock string, price string) squirrel.SelectBuilder {
+	// Add search condition
+	if name != "" {
+		query = query.Where("name LIKE ?", "%"+name+"%")
+	}
+
+	// Add stock filter condition [min:max] [max]
+	if stock != "" {
+		if strings.Contains(stock, "-") {
+			parts := strings.Split(stock, "-")
+			query = query.Where("stock BETWEEN ? AND ?", parts[0], parts[1])
+		} else {
+			query = query.Where("stock >= ?", stock)
+		}
+	}
+
+	// Add price filter condition [min:max] [max]
+	if price != "" {
+		if strings.Contains(price, "-") {
+			parts := strings.Split(price, "-")
+			query = query.Where("price BETWEEN ? AND ?", parts[0], parts[1])
+		} else {
+			query = query.Where("price >= ?", price)
+		}
+	}
+
+	return query
 }

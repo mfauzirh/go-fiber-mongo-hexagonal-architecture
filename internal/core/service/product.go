@@ -37,8 +37,16 @@ func (ps *ProductService) GetProductById(ctx context.Context, id int64) (*domain
 	return product, nil
 }
 
-func (ps *ProductService) GetProducts(ctx context.Context, page uint64, limit uint64) ([]domain.Product, int64, error) {
-	products, totalCount, err := ps.productRepository.GetProducts(ctx, page, limit)
+func (ps *ProductService) GetProducts(
+	ctx context.Context,
+	page uint64,
+	limit uint64,
+	name string,
+	stock string,
+	price string,
+	sortBy string) ([]domain.Product, int64, error) {
+
+	products, totalCount, err := ps.productRepository.GetProducts(ctx, page, limit, name, stock, price, sortBy)
 	if err != nil {
 		return nil, 0, err
 	}
