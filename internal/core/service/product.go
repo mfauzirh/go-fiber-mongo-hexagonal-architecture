@@ -37,13 +37,13 @@ func (ps *ProductService) GetProductById(ctx context.Context, id string) (*domai
 	return product, nil
 }
 
-func (ps *ProductService) GetProducts(ctx context.Context, page int64, limit int64) ([]domain.Product, error) {
-	products, err := ps.productRepository.GetProducts(ctx, page, limit)
+func (ps *ProductService) GetProducts(ctx context.Context, page int64, limit int64) ([]domain.Product, int64, error) {
+	products, totalCount, err := ps.productRepository.GetProducts(ctx, page, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return products, nil
+	return products, totalCount, nil
 }
 
 func (ps *ProductService) UpdateProduct(ctx context.Context, product *domain.Product) (*domain.Product, error) {
