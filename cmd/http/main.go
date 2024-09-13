@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/config"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/handler/http"
-	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo"
+	ProfilingDB "github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo/repository"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/service"
 )
@@ -28,7 +28,7 @@ func main() {
 
 	// Init database
 	ctx := context.Background()
-	dbClient, err := mongo.New(ctx, config.DB)
+	dbClient, err := ProfilingDB.New(ctx, config.ProfilingDB)
 	if err != nil {
 		fmt.Printf("Error initializing MongoDB connection: %v\n", err)
 		os.Exit(1)

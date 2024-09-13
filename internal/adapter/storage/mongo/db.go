@@ -14,7 +14,7 @@ type DB struct {
 	url string
 }
 
-func New(ctx context.Context, config *config.DB) (*DB, error) {
+func New(ctx context.Context, config *config.ProfilingDB) (*DB, error) {
 	// Initialize MongoDB client options
 	clientOptions := options.Client().ApplyURI(config.URI)
 

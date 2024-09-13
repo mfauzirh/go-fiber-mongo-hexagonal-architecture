@@ -8,9 +8,9 @@ import (
 
 type (
 	Container struct {
-		App  *App
-		DB   *DB
-		HTTP *HTTP
+		App         *App
+		ProfilingDB *ProfilingDB
+		HTTP        *HTTP
 	}
 
 	App struct {
@@ -18,7 +18,7 @@ type (
 		Env  string
 	}
 
-	DB struct {
+	ProfilingDB struct {
 		URI string
 	}
 
@@ -43,7 +43,7 @@ func New() (*Container, error) {
 		Env:  os.Getenv("APP_ENV"),
 	}
 
-	db := &DB{
+	db := &ProfilingDB{
 		URI: os.Getenv("MONGODB_URI"),
 	}
 
