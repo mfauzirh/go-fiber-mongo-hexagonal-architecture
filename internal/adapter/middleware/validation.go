@@ -36,8 +36,6 @@ func ValidationMiddleware(schema interface{}) fiber.Handler {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"errors": errorMessages})
 		}
 
-		// Store the validated request in context
-		c.Locals("validatedBody", req)
 		return c.Next()
 	}
 }
