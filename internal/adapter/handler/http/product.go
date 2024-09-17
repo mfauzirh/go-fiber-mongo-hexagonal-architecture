@@ -25,11 +25,11 @@ func NewProductHandler(svc port.ProductService) *ProductHandler {
 }
 
 func (ph *ProductHandler) CreateProduct(c *fiber.Ctx) error {
-	req, ok := c.Locals("validatedBody").(*dto.CreateProductRequest)
-	if !ok {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.NewWebResponse[interface{}](
+	var req dto.CreateProductRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.NewWebResponse[interface{}](
 			nil,
-			"Failed to parse validated body",
+			"Invalid request payload",
 			nil,
 		))
 	}
@@ -67,11 +67,11 @@ func (ph *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		))
 	}
 
-	req, ok := c.Locals("validatedBody").(*dto.UpdateProductRequest)
-	if !ok {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.NewWebResponse[interface{}](
+	var req dto.UpdateProductRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.NewWebResponse[interface{}](
 			nil,
-			"Failed to parse validated body",
+			"Invalid request payload",
 			nil,
 		))
 	}
@@ -119,6 +119,14 @@ func (ph *ProductHandler) DeleteProduct(c *fiber.Ctx) error {
 
 	err = ph.svc.DeleteProduct(c.Context(), id)
 	if err != nil {
+		if errors.Is(err, domain.ErrProductNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(dto.NewWebResponse[interface{}](
+				nil,
+				"Product not found",
+				nil,
+			))
+		}
+
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.NewWebResponse[interface{}](
 			nil,
 			"Failed to delete product",
@@ -137,7 +145,6 @@ func (ph *ProductHandler) GetProducts(c *fiber.Ctx) error {
 	price := c.Query("price", "")
 	sortBy := c.Query("sortBy", "")
 
-	// Convert to uint64
 	pageUint64 := uint64(page)
 	limitUint64 := uint64(limit)
 

@@ -112,6 +112,7 @@ func (r *ProductRepository) GetProducts(
 		log.Println("error when building select query", err)
 		return nil, 0, domain.ErrInternal
 	}
+	log.Println(sql)
 
 	rows, err := r.db.QueryContext(ctx, sql, args...)
 	if err != nil {
@@ -140,6 +141,7 @@ func (r *ProductRepository) GetProducts(
 		log.Println("error when building count query", err)
 		return nil, 0, domain.ErrInternal
 	}
+	log.Println(countSQL)
 
 	countRow := r.db.QueryRowContext(ctx, countSQL, countArgs...)
 	var totalCount int64
