@@ -12,6 +12,7 @@ import (
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/handler/http"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/middleware"
 	ProfilingDB "github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo"
+	MongoRepository "github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mongo/repository"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mysql"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/adapter/storage/mysql/repository"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/service"
@@ -38,7 +39,6 @@ func main() {
 
 	fmt.Println("Successfully connected to MongoDB")
 	profilingDb := profilingDBClient.Client.Database("product-management")
-	profilingCollection := profilingDb.Collection("request-logs")
 
 	// Init MySQL DB
 	mysqlDB, err := mysql.New(ctx, config.DB)
@@ -50,10 +50,10 @@ func main() {
 
 	fmt.Println("Successfully connected to MySQL")
 
-	// Apply profiling middleware
-	app.Use(middleware.RequestProfiling(profilingCollection))
+	profilingRepo := MongoRepository.NewProfilingRepository(profilingDb, "request-logs")
+	profilingService := service.NewProfilingService(profilingRepo)
+	app.Use(middleware.RequestProfiling(profilingService))
 
-	// Dependency injection
 	productRepository := repository.NewProductRepository(mysqlDB.DB)
 	productService := service.NewProductService(productRepository)
 

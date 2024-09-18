@@ -13,7 +13,7 @@ type ProductService struct {
 }
 
 // Create new product service instance
-func NewProductService(productRepository port.ProductRepository) *ProductService {
+func NewProductService(productRepository port.ProductRepository) port.ProductService {
 	return &ProductService{
 		productRepository,
 	}

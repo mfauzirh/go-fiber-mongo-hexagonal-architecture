@@ -15,7 +15,7 @@ import (
 func setupTestDB(t *testing.T) (*repository.ProductRepository, *sql.DB, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	repo := repository.NewProductRepository(db)
+	repo := repository.NewProductRepository(db).(*repository.ProductRepository)
 	return repo, db, mock
 }
 

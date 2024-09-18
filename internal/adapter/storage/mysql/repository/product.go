@@ -9,6 +9,7 @@ import (
 	"github.com/Masterminds/squirrel"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/domain"
+	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/port"
 )
 
 type ProductRepository struct {
@@ -16,7 +17,7 @@ type ProductRepository struct {
 	queryBuilder squirrel.StatementBuilderType
 }
 
-func NewProductRepository(db *sql.DB) *ProductRepository {
+func NewProductRepository(db *sql.DB) port.ProductRepository {
 	return &ProductRepository{
 		db:           db,
 		queryBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Question),
