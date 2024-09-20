@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/domain"
 	"github.com/mfauzirh/go-fiber-mongo-hexarch/internal/core/port"
@@ -22,7 +21,7 @@ func NewProfilingRepository(db *mongo.Database, collectionName string) port.Prof
 }
 
 func (r *ProfilingRepository) InsertProfilingData(ctx context.Context, data *domain.Profiling) (*domain.Profiling, error) {
-	startTime := time.Now()
+	// startTime := time.Now()
 	result, err := r.collection.InsertOne(ctx, data)
 	if err != nil {
 		log.Println("error when try to insert profiling data:", err)
@@ -30,6 +29,6 @@ func (r *ProfilingRepository) InsertProfilingData(ctx context.Context, data *dom
 	}
 
 	data.ID = result.InsertedID.(primitive.ObjectID)
-	log.Printf("profiling data inserted, duration: %v\n", time.Since(startTime))
+	// log.Printf("profiling data inserted, duration: %v\n", time.Since(startTime))
 	return data, nil
 }
