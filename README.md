@@ -48,7 +48,7 @@ To set up MongoDB to store our profiling requests. Create a new database called 
 The end result will look like this.
 ![MongoDB](assets/images/mongodb.png)
 
-## Running the Go Application
+### Running the Go Application
 To run the program by typing this command in the terminal, your position at the root of the project.
 ```
 go run ./cmd/http/main.go
@@ -56,7 +56,7 @@ go run ./cmd/http/main.go
 The application will run as below
 ![Go Run](assets/images/go-run.png)
 
-## Running the Unit Test
+### Running the Unit Test
 To run test you can run this command in your terminal, your position is in the root of the project.
 ```
 go test -v ./...
